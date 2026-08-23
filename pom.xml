@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    LegacyClaimsService — Insurance Claims Processing
-    ==================================================
-    Last dependency review: 12-Mar-2019 (Rakesh S.)
-    DO NOT UPGRADE Spring Boot without QA sign-off — see JIRA CLM-2871
-    (that ticket has been open since 2020)
+    ModernClaimsService — modernized from LegacyClaimsService
+    ==========================================================
+    Spring Boot 3.2 / Java 21
+    Log4j 1.x -> SLF4J + Logback
+    JDBC + stored procs -> Spring Data JPA (SP calls preserved via @Procedure)
+    Hardcoded credentials -> environment variables
+    Vulnerable deps upgraded or removed
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,132 +15,74 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.infy.claims</groupId>
-    <artifactId>legacy-claims-service</artifactId>
-    <version>1.7.3-SNAPSHOT</version>
+    <artifactId>modern-claims-service</artifactId>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Legacy Claims Service</name>
-    <description>Insurance claims intake, eligibility, premium calc and fraud scoring</description>
+    <name>Modern Claims Service</name>
+    <description>Modernized insurance claims service (Spring Boot 3.2 / Java 21)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.0.RELEASE</version>
+        <version>3.2.5</version>
         <relativePath/>
     </parent>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- pinned versions — do not change without approval -->
-        <jackson.version>2.9.10</jackson.version>
-        <log4j.version>1.2.17</log4j.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-fileupload.version>1.3.2</commons-fileupload.version>
-        <!-- Lombok override — 1.18.12 (from parent) fails on Java 17+
-             Kept to allow local builds on newer JDKs. See CLM-3199. -->
-        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
-        <!-- Web layer -->
+        <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- Data layer: JDBC + stored procs (no JPA — team preference) -->
+        <!-- Data via Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Security (basic auth for internal endpoints) -->
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Security (SecurityFilterChain style) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Oracle JDBC driver (pinned to a version we know works with prod) -->
+        <!-- Observability -->
         <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>19.3.0.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- H2 for local dev only -->
+        <!-- H2 (dev + test) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!--
-            LOGGING — Log4j 1.x
-            Team standard since 2014. Do not migrate to Log4j2 or SLF4J
-            without approval from Architecture Review Board.
-        -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <!-- Jackson (pinned — newer versions break our custom deserializer) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- Apache Commons — used all over the codebase -->
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>${commons-collections.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons-fileupload.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-
-        <!-- XML parsing for legacy partner integrations -->
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-
-        <!-- Lombok (compile only) -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -148,14 +92,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
