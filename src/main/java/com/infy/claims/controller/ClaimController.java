@@ -3,7 +3,8 @@ package com.infy.claims.controller;
 import com.infy.claims.model.Claim;
 import com.infy.claims.model.FraudScore;
 import com.infy.claims.service.ClaimService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/claims")
 public class ClaimController {
 
-    private static final Logger log = Logger.getLogger(ClaimController.class);
+    private static final Logger log = LoggerFactory.getLogger(ClaimController.class);
 
     @Autowired
     private ClaimService claimService;

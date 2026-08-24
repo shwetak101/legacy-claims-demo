@@ -1,6 +1,7 @@
 package com.infy.claims.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Payment integration — was going to be built out in 2019 when we
@@ -9,7 +10,7 @@ import org.apache.log4j.Logger;
  */
 public class PaymentUtil {
 
-    private static final Logger log = Logger.getLogger(PaymentUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentUtil.class);
 
     // private static final String STRIPE_KEY = "sk_live_REPLACE_ME";
     // private static final String RAZORPAY_KEY = "rzp_live_REPLACE_ME";

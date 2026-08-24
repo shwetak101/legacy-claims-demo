@@ -34,7 +34,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- pinned versions — do not change without approval -->
         <jackson.version>2.9.10</jackson.version>
-        <log4j.version>1.2.17</log4j.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <commons-fileupload.version>1.3.2</commons-fileupload.version>
         <!-- Lombok override — 1.18.12 (from parent) fails on Java 17+
@@ -47,12 +46,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Data layer: JDBC + stored procs (no JPA — team preference) -->
@@ -82,15 +75,10 @@
         </dependency>
 
         <!--
-            LOGGING — Log4j 1.x
-            Team standard since 2014. Do not migrate to Log4j2 or SLF4J
-            without approval from Architecture Review Board.
+            LOGGING — SLF4J + Logback (via Spring Boot default starter)
+            Migrated from Log4j 1.2.17 (CVE-2019-17571, CVE-2022-23305).
+            See act4-log4j-fix PR.
         -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
 
         <!-- Jackson (pinned — newer versions break our custom deserializer) -->
         <dependency>
