@@ -1,0 +1,28 @@
+# Legacy build workflow — added by security team, Q2 2022 (CLM-2540)
+# Minimal: just verify the build compiles and unit tests pass.
+# NOTE: intentionally no CodeQL or Dependency scanning yet — that's
+# on the modernization roadmap.
+
+name: Build
+
+on:
+  push:
+    branches: [ legacy ]
+  pull_request:
+    branches: [ legacy ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+          cache: maven
+      - name: Compile
+        run: mvn -B -DskipTests compile
+      - name: Test
+        run: mvn -B test
