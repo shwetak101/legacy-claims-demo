@@ -5,7 +5,8 @@ import com.infy.claims.model.Claim;
 import com.infy.claims.model.Customer;
 import com.infy.claims.model.FraudScore;
 import com.infy.claims.model.Policy;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ import java.util.Map;
 @Service
 public class ClaimService {
 
-    private static final Logger log = Logger.getLogger(ClaimService.class);
+    private static final Logger log = LoggerFactory.getLogger(ClaimService.class);
 
     @Autowired
     private ClaimDAO claimDAO;

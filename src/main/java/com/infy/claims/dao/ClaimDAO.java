@@ -3,7 +3,8 @@ package com.infy.claims.dao;
 import com.infy.claims.model.Claim;
 import com.infy.claims.model.Customer;
 import com.infy.claims.model.Policy;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +28,7 @@ import java.util.Map;
 @Repository
 public class ClaimDAO {
 
-    private static final Logger log = Logger.getLogger(ClaimDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(ClaimDAO.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

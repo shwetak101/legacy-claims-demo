@@ -1,6 +1,7 @@
 package com.infy.claims.legacy;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -24,7 +25,7 @@ import java.util.Map;
  */
 public class LegacyXmlParser {
 
-    private static final Logger log = Logger.getLogger(LegacyXmlParser.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyXmlParser.class);
 
     public List<Map<String, String>> parse(String xml) {
         List<Map<String, String>> claims = new ArrayList<>();
